@@ -1,0 +1,135 @@
+####################################################
+#  ████████╗████████╗██╗░░░░░██╗██╗░░░██╗███████╗  #
+#  ╚══██╔══╝╚══██╔══╝██║░░░░░██║██║░░░██║██╔════╝  #
+#  ░░░██║░░░░░░██║░░░██║░░░░░██║╚██╗░██╔╝█████╗░░  #
+#  ░░░██║░░░░░░██║░░░██║░░░░░██║░╚████╔╝░██╔══╝░░  #
+#  ░░░██║░░░░░░██║░░░███████╗██║░░╚██╔╝░░███████╗  #
+#  ░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚═╝░░░╚═╝░░░╚══════╝  #
+####################################################
+###############################
+#   Made by TimeCode @ 2023   #
+#  Plugin-Version: 1.0-BETA   #
+#       (05.02.2023)          #
+#############################################################################################################
+# If you got an error or found a bug (or if you have wishes), join my discord: https://discord.gg/mf9JNrzh  #
+# And Thank You for buying my plugin! Please do not report bugs in the review section, because as a premium #
+# buyer you're able to give me your wishes for the plugin and I will add them soon!                         #
+#############################################################################################################
+
+#Change this to "false" if you want to disable this plugin
+Enabled: true
+
+#Change the selected player for TikTokLive
+Player:
+  #Set this to "true" if all players which are online should be selected
+  AllOnline: false
+  #Change this to "true" if only the player which first joined the server should be selected
+  FirstWhichJoins: true
+  #ONLY IF AllOnline AND FirstWhichJoins ARE "false": Set the PlayerName which should be selected (only if he's online)
+  OrName: "TimeCode"
+
+#Here you can change all settings for the Socket (which will connect with TikFinity)
+Socket:
+  #Change this to your PUBLIC IP Address (127.0.0.1 or Localhost WON'T WORK)
+  IP: 127.0.0.1
+  #Change the SocketPort (I recommend to keep it at 89)
+  Port: 89
+  #Change this to your socket password, you will need it to setup the plugin for TikFinity
+  #(If you don't want to use a password set this to "" | NOT RECOMMENDED)
+  Password: "mysecretpassword123"
+Actions:
+  #Change this to your giftid, giftname (must be configurated in the giftlist.yml), coinamount
+  #You can also add multible giftids, giftnames and coinamounts by adding a "," and a space " " after each giftid, giftname or coinamount
+  6525, 6661:
+    #Send a Command
+    #Placeholders: %player_name% for the player-name, %player_uuid% for the player-uuid
+    #Get the Coordinates of the player: %player_x%, %player_y%, %player_z%,
+    #For the gifts: %gift_name% to get the gift-name (if it cannot find the name %gift_name% = %gift_id%),
+    #%gift_id% to get the gift-id, %gift_coins% to get the coins which are needed to buy the gift, %gift_amount% get the amount of gifts,
+    #%gifter_name% to get the username of the gifter, %gifter_id% to get the userid of the gifter
+    Command: ""
+    #Change this to "false" if the Command shouldn't get executed in the console (if it's "false" the command will be executed by the player)
+    PerformAsConsole: true
+    #Send a message to a player
+    #Placeholders: Same as in Command
+    Message: "&aThis is a test"
+    #Send a actionbar to the player
+    #Placeholders: Same like Command & Message
+    Actionbar: "&cThis is a test"
+    #Set a sound which should be played after this event get triggered
+    #All sounds which can be used can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+    Sound: BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON
+    TeleportPlayer:
+      #Changes the X-Coordinate of the player:
+      #+BLOCKS = +BLOCKXBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKXBLOCKSAWAY FROM THE CURRENT LOCATION,
+      #BLOCKS = XCOORDINATE
+      X: +10
+      #Changes the Y-Coordinate of the player:
+      #+BLOCKS = +BLOCKYBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKYBLOCKSAWAY FROM THE CURRENT LOCATION,
+      #BLOCKS = XCOORDINATE
+      Y: +0
+      #Changes the Z-Coordinate of the player:
+      #+BLOCKS = +BLOCKZBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKZBLOCKSAWAY FROM THE CURRENT LOCATION,
+      #BLOCKS = XCOORDINATE
+      Z: +0
+    #If you want to spawn mobs, use this setting
+    SpawnMob:
+      #The id of the mob
+      1:
+        #Set the Type of the Mob (REQUIRED)
+        #You can find all of them here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+        Type: WITHER
+        #Set the amount of mobs which should get spawned (NOT REQUIRED)
+        Amount: 1
+        #Change the settings for the SpawnDistance of the mob (NOT REQUIRED)
+        SpawnDistance:
+          #Change the settings for the random spawn system
+          Random:
+            #Change this to "false" if mob's shouldn't get spawned in a radius...
+            Enabled: true
+            #... of BELOW blocks
+            MaxRadius: 100
+          #Changes the X-Coordinate of the mob:
+          #+BLOCKS = +BLOCKXBLOCKSAWAY FROM THE PLAYER, -BLOCKS = -BLOCKXBLOCKSAWAY FROM THE PLAYER,
+          #BLOCKS = XCOORDINATE
+          X: +10
+          #Changes the Y-Coordinate of the mob:
+          #+BLOCKS = +BLOCKYBLOCKSAWAY FROM THE PLAYER, -BLOCKS = -BLOCKYBLOCKSAWAY FROM THE PLAYER,
+          #BLOCKS = XCOORDINATE
+          Y: +0
+          #Changes the Z-Coordinate of the mob:
+          #+BLOCKS = +BLOCKZBLOCKSAWAY FROM THE PLAYER, -BLOCKS = -BLOCKZBLOCKSAWAY FROM THE PLAYER,
+          #BLOCKS = XCOORDINATE
+          Z: +0
+
+#The Antispam system | Prevents sending BotMessages
+AntiSpam:
+  #To disable this set this to "false"
+  Enabled: true
+  #Set the MaxTikTokEvents
+  TikTokEvents: 6
+  #Set the MaxSECONDDistance of each event
+  MaxDistanceInSecBetweenEveryEvent: 2
+  Actions:
+    #Set the delay if the AntiSpam detects spam
+    DelayInSeconds: 5
+
+#"bStats is a free and open source website that helps the developer to collect usage data from his plugin" (Source: bstats.org)
+#If you don't want to send me automatic statistics, disable this with changing it to "false"
+bStats: true
+
+#DON'T CHANGE THIS
+#AFTER CHANGING THIS CONFIG WON'T EXIST ANYMORE
+config-version: 1.0
+
+
+
+
+
+
+
+
+
+
+
+

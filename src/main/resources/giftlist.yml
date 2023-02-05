@@ -1,0 +1,228 @@
+####################################################
+#  ████████╗████████╗██╗░░░░░██╗██╗░░░██╗███████╗  #
+#  ╚══██╔══╝╚══██╔══╝██║░░░░░██║██║░░░██║██╔════╝  #
+#  ░░░██║░░░░░░██║░░░██║░░░░░██║╚██╗░██╔╝█████╗░░  #
+#  ░░░██║░░░░░░██║░░░██║░░░░░██║░╚████╔╝░██╔══╝░░  #
+#  ░░░██║░░░░░░██║░░░███████╗██║░░╚██╔╝░░███████╗  #
+#  ░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚═╝░░░╚═╝░░░╚══════╝  #
+####################################################
+##########################################################
+#                TikTok Giftlist v1.0                    #
+#  If you want to add a giftid to this list in general,  #
+#  join my discord: https://discord.gg/8QWmU4ebCC        #
+#  then I will try to add your giftid to the next update #
+##########################################################
+########################################################################################################################
+#    Tutorial "How to add a Gift to the plugin":                                                                       #
+#      1. Copy the gift id! You can find all gift ids here: https://streamdps.com/tiktok-widgets/gifts/                #
+#         (The ID is just below the gift emoji)                                                                        #
+#      2. Remember the Coins which are needed to buy the gift for the streamer                                         #
+#      3. Look for the number of coins in the text below. (If there isn't any number who matches with the coins        #
+#         of your gift, create one at the bottom of the document in the following format: "  NUMBEROFCOINS:")          #
+#         IMPORTANT: ONLY the numbers that are TWO CHARACTERS away from the edge of the document are meant!            #
+#      4. Go into a new line BELOW THE CoinNumber and create a text in the following format: "    GIFTID: "GIFTNAME""  #
+#      5. You're finished! You just need to reload the plugin and your gift should be ready                            #
+#      (6. If you're too stupid to handle this, just join my discord ;))                                               #
+########################################################################################################################
+
+GiftID:
+  1:
+    7767: "February"
+    6093: "Football"
+    5760: "Weights"
+    5655: "Rose"
+    5269: "TikTok"
+    6788: "Glow Stick"
+    6784: "Cake Slice"
+    6246: "Thumbs Up"
+    6247: "Heart"
+    7765: "Royal Rose"
+    6890: "Love You"
+    7213: "Squirrel"
+    7375: "Lucky Pig"
+    7712: "Gold Award"
+  5:
+    5650: "Mic"
+    5487: "Fingerherz"
+    7501: "Hello Traveler"
+  7:
+    7759: "Buy myself flowers"
+  8:
+    7762: "Watch"
+  10:
+    6125: "Love You"
+    7341: "Panther"
+  20:
+    5658: "Perfume"
+  55:
+    7391: "I'm shy"
+  99:
+    6432: "Star"
+    5659: "Paper Crane"
+    6097: "Little Crown"
+    6104: "Cap"
+    6427: "Hat and Mustache"
+    6525: "Honorable Person"
+    6661: "Kiss your Heart"
+    6793: "Ranking Lit"
+  100:
+    7121: "Marvelous Confetti"
+    5513: "Schatztruhe"
+    5585: "Confetti"
+    5660: "Hand Hearts"
+    7163: "Mishka Bear"
+  150:
+    7364: "Sceptre"
+  169:
+    5729: "Butterfly"
+  199:
+    5509: "Sonnenbrille"
+    5586: "Herzen"
+    5734: "Goggles"
+    5880: "Lock and Key"
+    6436: "Love Focus"
+    6437: "Garland Headpiece"
+    6671: "Love You"
+    6795: "Ranking Lit"
+    6796: "Ranking Lit"
+    7458: "Wooly Hat"
+    7541: "Monsieur"
+    7545: "Feather Hat"
+    7546: "Coppola"
+    7547: "Guards Hat"
+    6794: "Ranking Lit"
+    6713: "Cheer For You"
+    6776: "Birthday Glasses"
+  299:
+    6007: "Boxing Gloves"
+    6265: "Duck"
+    6267: "Corgi"
+    6752: "Friend"
+    6868: "Hedgehog"
+    7313: "Cuddle Season"
+    7503: "We Love"
+    5882: "Rock 'n' Roll"
+    7532: "Dream Team"
+    7222: "Full moon"
+  399:
+    5899: "Swing"
+  499:
+    5731: "Coral"
+    6415: "Music"
+  500:
+    7122: "Gem Gun"
+    7168: "Money Gun"
+    7282: "Spaghetti Kiss"
+    7398: "Prince"
+    7688: "Don't Do It"
+  599:
+    6865: "Cooper Skates Home"
+  600:
+    6938: "Mermaid"
+    7266: "Applause"
+  699:
+    5897: "Swan"
+    7357: "TikTok Trophy"
+  800:
+    5664: "Pearl"
+  899:
+    5978: "Train"
+  999:
+    6233: "Travel with You"
+    5976: "Hot Air Balloon"
+  1000:
+    7123: "Shiny air balloon"
+    5587: "Gold Mine"
+    5596: "Sportwagen"
+    5680: "Disco ball"
+    5886: "Galaxy"
+    6200: "Mirror Bloom"
+    6781: "Watermelon Love"
+    7181: "Fondue"
+  1088:
+    6090: "Fireworks"
+  1200:
+    7631: "Take a Drive"
+  1299:
+    7186: "Frozen Magic"
+  1500:
+    5651: "Garland"
+    5955: "Champion"
+    7367: "Diamond Ring"
+    7467: "Chasing the Dream"
+  1999:
+    6033: "Make-up Box"
+    6834: "Gift Box"
+    6862: "Cooper Flies Home"
+    7196: "Let Us Dance"
+    6327: "Airship"
+    6789: "Red Carpet"
+    6797: "Super Cake"
+    7529: "Mystery Firework"
+  2000:
+    6417: "Club"
+    7182: "Raclette"
+  2150:
+    6820: "Whale diving"
+  2399:
+    7225: "Snow Plough"
+  2988:
+    5765: "Motorcycle"
+  3000:
+    6563: "Meteor Shower"
+    5652: "Ferris Wheel"
+  3999:
+    6863: "Cooper Swims Home"
+    6835: "Gift Box"
+  4000:
+    6148: "Flower Overflow"
+    7466: "Cosy Nights"
+  4888:
+    5767: "Private Jet"
+    6646: "Unicorn Fantasy"
+    7124: "Signature Jet"
+  5000:
+    7237: "Unicorn Fantasy"
+    7468: "Dancing Adam"
+  5999:
+    7626: "Truck"
+    6864: "Cooper's Home"
+  6000:
+    5627: "Romantic Carriage"
+    6884: "Aqua Car"
+  6999:
+    6790: "Celebration Time"
+    6787: "Birthday Party"
+  7000:
+    6089: "Sports Car"
+  10000:
+    6149: "Interstellar"
+    6203: "Sunset Speedway"
+  10999:
+    6367: "Falcon"
+  12000:
+    6892: "Race Car"
+  15000:
+    5954: "Planet"
+  20000:
+    6751: "TikTok Shuttle"
+    6833: "Castle Fantasy"
+    7125: "Premium Shuttle"
+  25999:
+    7400: "Adam's Dream"
+  26999:
+    7610: "Dragon Flame"
+  29999:
+    6369: "Lion"
+    7505: "Winter Lion"
+  34000:
+    7823: "Leon and Lion"
+  34999:
+    6038: "TikTok Universe"
+    7811: "TikTok Universe"
+    7312: "TikTok Universe+"
+  41999:
+    7603: "Holiday Universe"
+
+#DON'T CHANGE THIS! After changing this the whole GiftList will get resettet
+version: 1.0

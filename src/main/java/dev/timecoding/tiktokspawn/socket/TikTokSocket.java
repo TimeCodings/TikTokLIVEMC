@@ -1,0 +1,412 @@
+package dev.timecoding.tiktokspawn.socket;
+
+import dev.timecoding.tiktokspawn.TikTokSpawn;
+import dev.timecoding.tiktokspawn.data.ConfigHandler;
+import dev.timecoding.tiktokspawn.data.GiftDataHandler;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class TikTokSocket {
+
+    private ServerSocket serverSocket;
+    private Socket client;
+    private PrintWriter outPut;
+    private BufferedReader inPut;
+
+    private TikTokSpawn plugin;
+    private ConfigHandler configHandler;
+    private GiftDataHandler giftDataHandler;
+    private boolean connected = false;
+    private Integer times = 0;
+    private HashMap<String, String> valueList = new HashMap<>();
+
+    public TikTokSocket(TikTokSpawn plugin){
+        this.plugin = plugin;
+        this.configHandler = this.plugin.getConfigHandler();
+        this.giftDataHandler = this.plugin.getGiftDataHandler();
+        this.plugin.setCurrentSocket(this);
+        this.listen();
+    }
+
+    public void listen(){
+        if(!isConnected()) {
+            connected = true;
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    String ip = configHandler.getString("Socket.IP");
+                    InetAddress InetAdrr = null;
+                    try {
+                        InetAdrr = InetAddress.getByName(ip);
+                    } catch (UnknownHostException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        serverSocket = new ServerSocket(configHandler.getInteger("Socket.Port"), 0, InetAdrr);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        client = serverSocket.accept();
+                    } catch (IOException e) {
+                    }
+                    try {
+                        outPut = new PrintWriter(client.getOutputStream(), true);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        inPut = new BufferedReader(new InputStreamReader(client.getInputStream()), 200*1024*1024);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //TODO
+                    int i = 0;
+                    while (true){
+                        try {
+                            if (!inPut.ready()) break;
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        i++;
+                        String line = null;
+                        try {
+                            line = inPut.readLine();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if(line == null){
+                            break;
+                        }else if(i == 4 && line.startsWith("value1=")){
+                            decodeString(line);
+                            if(getValues().get("password").equals(configHandler.getString("Socket.Password"))){
+                                for(String action : getActions()){
+                                    List<Integer> giftIdListFromAction = getValidGiftIDs(action);
+                                    for(Integer giftId : giftIdListFromAction){
+                                        if(giftId.toString().equals(getValues().get("giftId").toString())){
+                                            String path = "Actions."+action+".";
+                                            for(Player selected : plugin.getSelectedPlayers()){
+                                                executeConfigActions(selected, path, action);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    reconnect();
+                }
+            });
+        }
+    }
+
+    private HashMap<String, String> decodeString(String toDecode){
+        List<String> valuesAndKeys = new ArrayList<String>(Arrays.asList(toDecode.split("&")));
+        HashMap<String, String> decodedList = new HashMap<>();
+        for(String valueAndKey : valuesAndKeys){
+            String[] splitter = valueAndKey.split("=");
+            String value = "";
+            if(splitter.length > 1){
+                value = splitter[1];
+            }
+            decodedList.put(splitter[0], value);
+        }
+        this.valueList = decodedList;
+        return decodedList;
+    }
+
+    public HashMap<String, String> getValues(){
+        return this.valueList;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void disconnect(){
+        if(isConnected()) {
+            connected = false;
+            if(inPut != null) {
+                try {
+                    inPut.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if(outPut != null) {
+                outPut.close();
+            }
+            if(client != null) {
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if(serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    public void executeConfigActions(Player player, String path, String action){
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                String userId = getValues().get("userId");
+                String username = getValues().get("username");
+                Integer giftId = Integer.valueOf(getValues().get("giftId"));
+                String giftAmount = getValues().get("value2");
+                if(configHandler.keyExists(path+"Command")){
+                    String command = replacePlaceholders(configHandler.getString(path+"Command"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                    if(command.startsWith("/")){
+                        command = command.substring(1, command.length());
+                    }
+                    if(configHandler.keyExists(path+"PerformAsConsole") && configHandler.getBoolean(path+"PerformAsConsole")){
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    }else{
+                        player.performCommand(command);
+                    }
+                }
+                if(configHandler.keyExists(path+"Message")){
+                    String message = replacePlaceholders(configHandler.getString(path+"Message"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                    player.sendMessage(message);
+                }
+                if(configHandler.keyExists(path+"Actionbar")){
+                    String message = replacePlaceholders(configHandler.getString(path+"Actionbar"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+                }
+                if(configHandler.keyExists(path+"Sound")){
+                    player.playSound(player.getLocation(), getSoundByString(configHandler.getString(path+"Sound")), 2, 2);
+                }
+
+                player.teleport(getModifiedLocation(player.getLocation(), path+"TeleportPlayer"));
+                for(String spawnMobPath : getSpawnMobPathList(action)){
+                    EntityType type = getEntityTypeByString(configHandler.getString(spawnMobPath+"Type"));
+                    if(type != null){
+                        Integer entityAmount = 1;
+                        if(configHandler.keyExists(spawnMobPath+"Amount")){
+                            entityAmount = configHandler.getInteger(spawnMobPath+"Amount");
+                        }
+                        Location modifiedLocation = player.getLocation();
+                        if(configHandler.getBoolean(spawnMobPath+"SpawnDistance.Random.Enabled")){
+                            Integer maxRadius = configHandler.getInteger(spawnMobPath+"SpawnDistance.Random.MaxRadius");
+                            Random random = new Random();
+                            Integer randomX = random.nextInt(maxRadius);
+                            Integer randomZ = random.nextInt(maxRadius);
+                            modifiedLocation = modifiedLocation.add(randomX, 0, randomZ);
+                        }else{
+                            modifiedLocation = getModifiedLocation(player.getLocation(), spawnMobPath+"SpawnDistance.");
+                        }
+                        player.getWorld().spawnEntity(modifiedLocation, type);
+                    }
+                }
+            }
+        });
+    }
+
+    private EntityType getEntityTypeByString(String stringEntityType){
+        return EntityType.valueOf(stringEntityType.toUpperCase());
+    }
+
+    private Sound getSoundByString(String soundStringType){
+        return Sound.valueOf(soundStringType.toUpperCase());
+    }
+
+    private Location getModifiedLocation(Location location, String path){
+        String xCoordinateValue = this.configHandler.getString(path+".X");
+        String yCoordinateValue = this.configHandler.getString(path+".Y");
+        String zCoordinateValue = this.configHandler.getString(path+".Z");
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        if(!xCoordinateValue.equalsIgnoreCase("")){
+            if(xCoordinateValue.startsWith("+")){
+                x = x+Integer.valueOf(xCoordinateValue.replace("+", ""));
+            }else if(xCoordinateValue.startsWith("-")){
+                x = x-Integer.valueOf(xCoordinateValue.replace("-", ""));
+            }
+        }
+        if(!yCoordinateValue.equalsIgnoreCase("")){
+            if(yCoordinateValue.startsWith("+")){
+                y = y+Integer.valueOf(yCoordinateValue.replace("+", ""));
+            }else if(yCoordinateValue.startsWith("-")){
+                y = y-Integer.valueOf(yCoordinateValue.replace("-", ""));
+            }
+        }
+        if(!zCoordinateValue.equalsIgnoreCase("")){
+            if(zCoordinateValue.startsWith("+")){
+                z = z+Integer.valueOf(zCoordinateValue.replace("+", ""));
+            }else if(xCoordinateValue.startsWith("-")){
+                z = z-Integer.valueOf(zCoordinateValue.replace("-", ""));
+            }
+        }
+        return new Location(location.getWorld(), x, y, z, location.getYaw(), location.getPitch());
+    }
+
+    private String replacePlaceholders(String existsString, Player player, String giftName, Integer giftId, Integer giftCoins, String giftAmount){
+        return existsString.replace("%player_name%", player.getName()).replace("%player_uuid%", player.getUniqueId().toString())
+                .replace("%player_x%", String.valueOf(player.getLocation().getBlockX())).replace("%player_y%", String.valueOf(player.getLocation().getBlockY())).replace("%player_z%", String.valueOf(player.getLocation().getBlockZ()))
+                .replace("%player_yaw%", String.valueOf(player.getLocation().getYaw())).replace("%player_pitch%", String.valueOf(player.getLocation().getPitch()))
+                .replace("%gift_name%", giftName).replace("%gift_id%", String.valueOf(giftId)).replace("%gift_coins%", String.valueOf(giftCoins)).replace("%gift_amount%", giftAmount)
+                .replace("%gifter_name%", getValues().get("username")).replace("%gifter_id%", getValues().get("userId"));
+    }
+
+    public List<String> getSpawnMobPathList(String action){
+        List<String> mobPaths = new ArrayList<>();
+        List<String> idList = new ArrayList<>();
+        for(String keys : this.configHandler.getConfig().getValues(true).keySet()){
+            String[] splitter = keys.split("\\.");
+            if(splitter.length > 3){
+                if(splitter[2].equalsIgnoreCase("SpawnMob") && splitter[1].equals(action)){
+                    if(!idList.contains(splitter[3])){
+                        idList.add(splitter[3]);
+                        mobPaths.add("Actions."+action+"."+"SpawnMob."+splitter[3]+".");
+                    }
+                }
+            }
+        }
+        return mobPaths;
+    }
+
+    public Integer getCoinsByGiftID(Integer giftId){
+        String path = getGiftPath(giftId);
+        if(path != null){
+            return Integer.valueOf(path.split("\\.")[1]);
+        }
+        return 0;
+    }
+
+    private Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+
+    public List<String> getActions(){
+        List<String> actions = new ArrayList<>();
+        for(String keys : this.configHandler.getConfig().getValues(true).keySet()){
+            if(keys.startsWith("Actions.") && !actions.contains(keys.split("\\.")[1])){
+                actions.add(keys.split("\\.")[1]);
+            }
+        }
+        return actions;
+    }
+
+    public List<Integer> getValidGiftIDs(String ids){
+        List<String> mixedGiftList = new ArrayList<String>(Arrays.asList(ids.split(", ")));
+        List<Integer> giftIdList = new ArrayList<>();
+        for(String mixedValue : mixedGiftList){
+            if(isInteger(mixedValue) || !isInteger(mixedValue) && mixedValue.contains("C")){
+                String id = mixedValue;
+                if(mixedValue.contains("C")){
+                    for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
+                        String actionBase = "GiftID."+id.toString().replace("C", "")+".";
+                        if(keys.startsWith(actionBase)){
+                            if(!giftIdList.contains(Integer.valueOf(keys.replace(actionBase, "")))) {
+                                giftIdList.add(Integer.valueOf(keys.replace(actionBase, "")));
+                            }
+                        }
+                    }
+                }else if(giftExists(Integer.valueOf(id))){
+                    if(!giftIdList.contains(id)) {
+                        giftIdList.add(Integer.valueOf(id));
+                    }
+                }
+            }else {
+                Integer giftIDbyName = getGiftIDbyName(mixedValue);
+                if(giftIDbyName != 0){
+                    giftIdList.add(giftIDbyName);
+                }
+            }
+        }
+        return giftIdList;
+    }
+
+    public Integer getGiftIDbyName(String name){
+        for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
+            if(keys.startsWith("GiftID.")){
+                String value = this.giftDataHandler.getString(keys);
+                if(value.equalsIgnoreCase(name)){
+                    return Integer.valueOf(keys.split("\\.")[2]);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public String getGiftNameByID(Integer id){
+        String path = getGiftPath(id);
+        return this.giftDataHandler.getString(path);
+    }
+
+    public String getGiftPath(Integer id){
+        if(giftExists(id)){
+            for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
+                if(keys.startsWith("GiftID.") && keys.endsWith("."+String.valueOf(id))){
+                    return keys;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean giftExists(Integer id){
+        for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
+            if(keys.startsWith("GiftID.") && keys.endsWith("."+String.valueOf(id))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isInteger(String toProof){
+        try {
+            Integer.parseInt(toProof);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    public void reconnect(){
+        disconnect();
+        Integer tiktokEvents = this.configHandler.getInteger("AntiSpam.TikTokEvents");
+        Integer seconds = this.configHandler.getInteger("AntiSpam.MaxDistanceInSecBetweenEveryEvent");
+        if(calendar.getTimeInMillis() >= System.currentTimeMillis() || times == 0) {
+            if (this.configHandler.getBoolean("AntiSpam.Enabled")) {
+                calendar.add(Calendar.SECOND, seconds);
+                times++;
+                if (times >= tiktokEvents) {
+                    times = 0;
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                listen();
+                            }
+                        }, 20 * this.configHandler.getInteger("AntiSpam.Actions.DelayInSeconds"));
+                } else {
+                    listen();
+                }
+            } else {
+                listen();
+            }
+        }else{
+            listen();
+        }
+    }
+
+}
