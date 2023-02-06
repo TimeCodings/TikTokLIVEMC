@@ -67,6 +67,7 @@ public class ConfigHandler {
     }
 
     public void reload() {
+        save();
         cfg = YamlConfiguration.loadConfiguration(f);
     }
 

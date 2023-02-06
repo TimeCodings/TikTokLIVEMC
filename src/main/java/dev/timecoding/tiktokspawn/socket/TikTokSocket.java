@@ -63,51 +63,53 @@ public class TikTokSocket {
                         client = serverSocket.accept();
                     } catch (IOException e) {
                     }
-                    try {
-                        outPut = new PrintWriter(client.getOutputStream(), true);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        inPut = new BufferedReader(new InputStreamReader(client.getInputStream()), 200*1024*1024);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //TODO
-                    int i = 0;
-                    while (true){
+                    if (client != null) {
                         try {
-                            if (!inPut.ready()) break;
+                            outPut = new PrintWriter(client.getOutputStream(), true);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        i++;
-                        String line = null;
                         try {
-                            line = inPut.readLine();
+                            inPut = new BufferedReader(new InputStreamReader(client.getInputStream()), 200 * 1024 * 1024);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        if(line == null){
-                            break;
-                        }else if(i == 4 && line.startsWith("value1=")){
-                            decodeString(line);
-                            if(getValues().get("password").equals(configHandler.getString("Socket.Password"))){
-                                for(String action : getActions()){
-                                    List<Integer> giftIdListFromAction = getValidGiftIDs(action);
-                                    for(Integer giftId : giftIdListFromAction){
-                                        if(giftId.toString().equals(getValues().get("giftId").toString())){
-                                            String path = "Actions."+action+".";
-                                            for(Player selected : plugin.getSelectedPlayers()){
-                                                executeConfigActions(selected, path, action);
+                        //TODO
+                        int i = 0;
+                        while (true) {
+                            try {
+                                if (!inPut.ready()) break;
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            i++;
+                            String line = null;
+                            try {
+                                line = inPut.readLine();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (line == null) {
+                                break;
+                            } else if (i == 4 && line.startsWith("value1=")) {
+                                decodeString(line);
+                                if (getValues().get("password").equals(configHandler.getString("Socket.Password"))) {
+                                    for (String action : getActions()) {
+                                        List<Integer> giftIdListFromAction = getValidGiftIDs(action);
+                                        for (Integer giftId : giftIdListFromAction) {
+                                            if (giftId.toString().equals(getValues().get("giftId").toString())) {
+                                                String path = "Actions." + action + ".";
+                                                for (Player selected : plugin.getSelectedPlayers()) {
+                                                    executeConfigActions(selected, path, action);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                        reconnect();
                     }
-                    reconnect();
                 }
             });
         }

@@ -1,12 +1,15 @@
 package dev.timecoding.tiktokspawn;
 
 import dev.timecoding.tiktokspawn.api.Metrics;
+import dev.timecoding.tiktokspawn.command.TikTokLiveCommand;
+import dev.timecoding.tiktokspawn.command.completer.TikTokLiveCompleter;
 import dev.timecoding.tiktokspawn.data.ConfigHandler;
 import dev.timecoding.tiktokspawn.data.GiftDataHandler;
 import dev.timecoding.tiktokspawn.listener.TikTokListener;
 import dev.timecoding.tiktokspawn.socket.TikTokSocket;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,6 +45,9 @@ public final class TikTokSpawn extends JavaPlugin {
         this.consoleCommandSender.sendMessage("§dTikTok§fLive §av"+this.getDescription().getVersion()+" §egot §aenabled!");
         TikTokSocket socket = new TikTokSocket(this);
         this.currentSocket = socket;
+        PluginCommand tikTokCommand = getCommand("tiktoklive");
+        tikTokCommand.setExecutor(new TikTokLiveCommand(this));
+        tikTokCommand.setTabCompleter(new TikTokLiveCompleter(this));
         getServer().getPluginManager().registerEvents(new TikTokListener(this), this);
         if(configHandler.getBoolean("Player.AllOnline") || configHandler.getBoolean("Player.FirstWhichJoins") && selectedPlayers.size() == 0){
             for(Player allOnline : Bukkit.getOnlinePlayers()){

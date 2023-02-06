@@ -62,6 +62,7 @@ public class GiftDataHandler {
     }
 
     public void reload() {
+        save();
         cfg = YamlConfiguration.loadConfiguration(f);
     }
 

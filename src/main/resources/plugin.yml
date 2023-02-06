@@ -5,3 +5,9 @@ api-version: 1.19
 authors: [ TimeCoding ]
 description: A plugin which allows to execute specific actions after a TikTok Donation was received!
 website: timecoding.de
+
+commands:
+  tiktoklive:
+    description: "The main command for the TikTokLive-Plugin"
+    aliases:
+      - ttl
