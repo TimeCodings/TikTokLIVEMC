@@ -64,6 +64,7 @@ public class TikTokSocket {
                     try {
                         client = serverSocket.accept();
                     } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                     if (client != null) {
                         try {
@@ -76,7 +77,6 @@ public class TikTokSocket {
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        //TODO
                         int i = 0;
                         while (true) {
                             try {
