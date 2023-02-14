@@ -10,12 +10,10 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,10 +36,14 @@ public class TikTokSocket {
         this.configHandler = this.plugin.getConfigHandler();
         this.giftDataHandler = this.plugin.getGiftDataHandler();
         this.plugin.setCurrentSocket(this);
-        this.listen();
+        if(this.plugin.getConfigHandler().getBoolean("Socket.Legacy")){
+            this.listenLegacy();
+        }else{
+            this.listen();
+        }
     }
 
-    public void listen(){
+    public void listenLegacy(){
         if(!isConnected()) {
             connected = true;
             Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -94,24 +96,77 @@ public class TikTokSocket {
                             } else if (i == 4 && line.startsWith("value1=")) {
                                 decodeString(line);
                                 if (getValues().get("password").equals(configHandler.getString("Socket.Password"))) {
-                                    for (String action : getActions()) {
-                                        List<Integer> giftIdListFromAction = getValidGiftIDs(action);
-                                        for (Integer giftId : giftIdListFromAction) {
-                                            if (giftId.toString().equals(getValues().get("giftId").toString())) {
-                                                String path = "Actions." + action + ".";
-                                                for (Player selected : plugin.getSelectedPlayers()) {
-                                                    executeConfigActions(selected, path, action);
-                                                }
-                                            }
-                                        }
-                                    }
+                                    executeActions();
                                 }
                             }
                         }
-                        reconnect();
+                        reconnectLegacy();
                     }
                 }
             });
+        }
+    }
+
+    private BukkitTask task = null;
+
+    public void listen() {
+        if(!isListening()) {
+            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, new Runnable() {
+                @Override
+                public void run() {
+                    URL url = null;
+                    try {
+                        url = new URL("https://timecoding.de/tikfinity/reader.php?ip=" + plugin.getPublicIPAddress() + "&port=" + configHandler.getInteger("Socket.Port") + "&password=" + configHandler.getString("Socket.Password") + "");
+                        Scanner sc = new Scanner(url.openStream());
+                        StringBuffer sb = new StringBuffer();
+                        while (sc.hasNext()) {
+                            sb.append(sc.next());
+                        }
+                        String result = sb.toString();
+                        result = result.replaceAll("<[^>]*>", "");
+                        for (String message : result.split(" , ")) {
+                            if (!message.equalsIgnoreCase("")) {
+                                decodeString(message);
+                                executeActions();
+                            }
+                        }
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }, 0, this.configHandler.getInteger("Socket.RefreshInTicks"));
+        }
+    }
+
+    public boolean isListening(){
+        return (task != null);
+    }
+
+    public void disconnect(){
+        if(isListening()){
+            task.cancel();
+            task = null;
+        }
+    }
+
+    public void reconnect(){
+        disconnect();
+        listen();
+    }
+
+    public void executeActions(){
+        for (String action : getActions()) {
+            List<Integer> giftIdListFromAction = getValidGiftIDs(action);
+            for (Integer giftId : giftIdListFromAction) {
+                if (giftId.toString().equals(getValues().get("giftId").toString())) {
+                    String path = "Actions." + action + ".";
+                    for (Player selected : plugin.getSelectedPlayers()) {
+                        executeConfigActions(selected, path, action);
+                    }
+                }
+            }
         }
     }
 
@@ -138,7 +193,7 @@ public class TikTokSocket {
         return connected;
     }
 
-    public void disconnect(){
+    public void disconnectLegacy(){
         if(isConnected()) {
             connected = false;
             if(inPut != null) {
@@ -384,8 +439,8 @@ public class TikTokSocket {
         }
     }
 
-    public void reconnect(){
-        disconnect();
+    public void reconnectLegacy(){
+        disconnectLegacy();
         Integer tiktokEvents = this.configHandler.getInteger("AntiSpam.TikTokEvents");
         Integer seconds = this.configHandler.getInteger("AntiSpam.MaxDistanceInSecBetweenEveryEvent");
         if(calendar.getTimeInMillis() >= System.currentTimeMillis() || times == 0) {
@@ -397,17 +452,17 @@ public class TikTokSocket {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
                             @Override
                             public void run() {
-                                listen();
+                                listenLegacy();
                             }
                         }, 20 * this.configHandler.getInteger("AntiSpam.Actions.DelayInSeconds"));
                 } else {
-                    listen();
+                    listenLegacy();
                 }
             } else {
-                listen();
+                listenLegacy();
             }
         }else{
-            listen();
+            listenLegacy();
         }
     }
 

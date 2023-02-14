@@ -32,7 +32,7 @@ public class ConfigHandler {
 
     private boolean retry = false;
 
-    private String newconfigversion = "1.0";
+    private String newconfigversion = "1.1";
 
     public void init() {
         f = new File(plugin.getDataFolder(), "config.yml");
@@ -67,7 +67,7 @@ public class ConfigHandler {
     }
 
     public void reload() {
-        save();
+        f = new File(plugin.getDataFolder(), "config.yml");
         cfg = YamlConfiguration.loadConfiguration(f);
     }
 

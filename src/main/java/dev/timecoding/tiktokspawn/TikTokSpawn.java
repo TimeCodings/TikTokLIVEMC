@@ -1,6 +1,7 @@
 package dev.timecoding.tiktokspawn;
 
 import dev.timecoding.tiktokspawn.api.Metrics;
+import dev.timecoding.tiktokspawn.api.UpdateChecker;
 import dev.timecoding.tiktokspawn.command.TikTokLiveCommand;
 import dev.timecoding.tiktokspawn.command.completer.TikTokLiveCompleter;
 import dev.timecoding.tiktokspawn.data.ConfigHandler;
@@ -31,6 +32,7 @@ public final class TikTokSpawn extends JavaPlugin {
     private List<Player> selectedPlayers = new ArrayList<>();
     private Metrics metrics;
     private ConsoleCommandSender consoleCommandSender = this.getServer().getConsoleSender();
+    private UpdateChecker updateChecker = new UpdateChecker(this, 107864);
 
     @Override
     public void onEnable() {
@@ -59,6 +61,21 @@ public final class TikTokSpawn extends JavaPlugin {
         if(this.configHandler.getBoolean("bStats")){
             this.metrics = new Metrics(this,17647);
         }
+            try {
+                if (this.updateChecker.checkForUpdates()) {
+                    this.consoleCommandSender.sendMessage("");
+                    this.consoleCommandSender.sendMessage("");
+                    this.consoleCommandSender.sendMessage("§cA new update for this resource was found:");
+                    this.consoleCommandSender.sendMessage("§eTo get the latest features as well as bug fixes it is strongly recommended to download this update:");
+                    this.consoleCommandSender.sendMessage("§aVersion: §f" + this.updateChecker.getLatestVersion());
+                    this.consoleCommandSender.sendMessage("§aDownload: §f" + this.updateChecker.getResourceURL());
+                    this.consoleCommandSender.sendMessage("");
+                    this.consoleCommandSender.sendMessage("");
+                }
+            } catch (Exception e) {
+                this.consoleCommandSender.sendMessage("Cannot build connection! Is the Website down?");
+                this.consoleCommandSender.sendMessage("Es konnte keine Verbindung zu SpigotMC hergestellt werden! Ist die Website offline?");
+            }
         }else{
             consoleCommandSender.sendMessage("§cThe plugin got disabled, because someone disabled the plugin in the config.yml!");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -70,10 +87,11 @@ public final class TikTokSpawn extends JavaPlugin {
         this.consoleCommandSender.sendMessage("§dTikTok§fLive §av"+this.getDescription().getVersion()+" §egot §cdisabled!");
         if(this.currentSocket != null){
             this.currentSocket.disconnect();
+            this.currentSocket.disconnectLegacy();
         }
     }
 
-    private String getPublicIPAddress(){
+    public String getPublicIPAddress(){
         try {
             URL amazonIpServer = new URL("http://checkip.amazonaws.com");
             BufferedReader in = new BufferedReader(new InputStreamReader(amazonIpServer.openStream()));

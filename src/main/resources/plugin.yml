@@ -1,7 +1,7 @@
 name: TikTokLive
-version: 1.0-BETA
+version: 1.1-BETA
 main: dev.timecoding.tiktokspawn.TikTokSpawn
-api-version: 1.19
+api-version: 1.13
 authors: [ TimeCoding ]
 description: A plugin which allows to execute specific actions after a TikTok Donation was received!
 website: timecoding.de

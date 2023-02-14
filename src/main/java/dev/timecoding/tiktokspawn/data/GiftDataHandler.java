@@ -62,7 +62,7 @@ public class GiftDataHandler {
     }
 
     public void reload() {
-        save();
+        f = new File(plugin.getDataFolder(), "giftlist.yml");
         cfg = YamlConfiguration.loadConfiguration(f);
     }
 
@@ -73,7 +73,7 @@ public class GiftDataHandler {
     public void checkForUpdate() {
         if (configUpdateAvailable()) {
             final Map<String, Object> quicksave = getConfig().getValues(true);
-            File file = new File("plugins//TikTokLive", "datalist.yml");
+            File file = new File("plugins//TikTokLive", "giftlist.yml");
             if (file.exists()) {
                 try {
                     Files.delete(file.toPath());
@@ -84,7 +84,7 @@ public class GiftDataHandler {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, new Runnable() {
 
                     public void run() {
-                        plugin.saveResource("datalist.yml", true);
+                        plugin.saveResource("giftlist.yml", true);
                         reload();
                         for (String save : quicksave.keySet()) {
                             if (keyExists(save) && quicksave.get(save) != null && !save.equalsIgnoreCase("version")) {

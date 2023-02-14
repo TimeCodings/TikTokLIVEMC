@@ -25,6 +25,7 @@ public class TikTokLiveCommand implements CommandExecutor {
                 this.plugin.getConfigHandler().reload();
                 this.plugin.getGiftDataHandler().reload();
                 if(this.plugin.getConfigHandler().getBoolean("Enabled")) {
+                    this.plugin.getCurrentSocket().disconnectLegacy();
                     this.plugin.getCurrentSocket().disconnect();
                     this.plugin.setCurrentSocket(new TikTokSocket(this.plugin));
                 }else{
@@ -33,7 +34,11 @@ public class TikTokLiveCommand implements CommandExecutor {
                 }
             }else if(args[0].equalsIgnoreCase("generate") && sender.hasPermission("tiktoklive.generate")){
                 sender.sendMessage("§aFirstly, thanks for installing my plugin! §eTo register this plugin in TikFinity, create a new action under \"Actions & Events\" in which you activate \"Webhooks\" and insert the following link: ");
-                sender.sendMessage("§fhttps://timecoding.de/tikfinity/index.php?ip="+this.plugin.getConfigHandler().getString("Socket.IP")+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
+                if(this.plugin.getConfigHandler().getBoolean("Socket.Legacy")){
+                    sender.sendMessage("§fhttps://timecoding.de/tikfinity/legacy.php?ip="+this.plugin.getConfigHandler().getString("Socket.IP")+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
+                }else{
+                    sender.sendMessage("§fhttps://timecoding.de/tikfinity/connector.php?ip="+this.plugin.getConfigHandler().getString("Socket.IP")+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
+                }
             }else if(sender.hasPermission("tiktoklive.help")){
                 sender.sendMessage("");
                 sender.sendMessage("§eCommands:");

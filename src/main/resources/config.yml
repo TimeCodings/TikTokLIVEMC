@@ -12,8 +12,8 @@
 #       (05.02.2023)          #
 #############################################################################################################
 # If you got an error or found a bug (or if you have wishes), join my discord: https://discord.gg/mf9JNrzh  #
-# And Thank You for buying my plugin! Please do not report bugs in the review section, because as a premium #
-# buyer you're able to give me your wishes for the plugin and I will add them soon!                         #
+# And Thank You for downloading my plugin! Please do not report bugs in the review section, because as a    #
+# Downloader you're able to give me your wishes for the plugin and I will add them soon!                    #
 #############################################################################################################
 
 #Change this to "false" if you want to disable this plugin
@@ -30,7 +30,11 @@ Player:
 
 #Here you can change all settings for the Socket (which will connect with TikFinity)
 Socket:
-  #Change this to your PUBLIC IP Address (127.0.0.1 or Localhost WON'T WORK)
+  #Uses the old socket system of the plugin (ONLY WORKS ON PUBLIC SERVERS | I DO NOT RECOMMEND TO ENABLE THIS)
+  Legacy: false
+  #This is the time in ticks between two tikfinity checks (only works if legacy is disabled)
+  RefreshInTicks: 20
+  #Change this to your PUBLIC IP Address (127.0.0.1 or Localhost WON'T WORK | THIS FUNCTION IS ONLY USABLE IF LEGACY IS ENABLED)
   IP: 127.0.0.1
   #Change the SocketPort (I recommend to keep it at 89)
   Port: 89
@@ -120,7 +124,7 @@ bStats: true
 
 #DON'T CHANGE THIS
 #AFTER CHANGING THIS CONFIG WON'T EXIST ANYMORE
-config-version: 1.0
+config-version: 1.1
 
 
 
