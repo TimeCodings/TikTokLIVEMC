@@ -126,7 +126,7 @@ public class ConfigHandler {
                 return Material.valueOf(material);
             }
         }
-        return Material.GRASS_BLOCK;
+        return Material.GRASS;
     }
 
     public Enchantment getEnchantmentByString(String enchant){

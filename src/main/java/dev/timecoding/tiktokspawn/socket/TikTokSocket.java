@@ -253,8 +253,10 @@ public class TikTokSocket {
                 if(configHandler.keyExists(path+"Sound")){
                     player.playSound(player.getLocation(), getSoundByString(configHandler.getString(path+"Sound")), 2, 2);
                 }
-
-                player.teleport(getModifiedLocation(player.getLocation(), path+"TeleportPlayer"));
+                if(configHandler.keyExists(path+"TeleportPlayer")){
+                    Location modifiedLocation = getModifiedLocation(player.getLocation(), path+"TeleportPlayer");
+                    player.teleport(modifiedLocation);
+                }
                 for(String spawnMobPath : getSpawnMobPathList(action)){
                     EntityType type = getEntityTypeByString(configHandler.getString(spawnMobPath+"Type"));
                     if(type != null){

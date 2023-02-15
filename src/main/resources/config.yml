@@ -63,19 +63,20 @@ Actions:
     #Set a sound which should be played after this event get triggered
     #All sounds which can be used can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
     Sound: BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON
+    #IMPORTANT INFORMATION: YOU NEED A " BEFORE AND AFTER THE X, Y and Z COORDINATE
     TeleportPlayer:
       #Changes the X-Coordinate of the player:
       #+BLOCKS = +BLOCKXBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKXBLOCKSAWAY FROM THE CURRENT LOCATION,
       #BLOCKS = XCOORDINATE
-      X: +10
+      X: "+10"
       #Changes the Y-Coordinate of the player:
       #+BLOCKS = +BLOCKYBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKYBLOCKSAWAY FROM THE CURRENT LOCATION,
       #BLOCKS = XCOORDINATE
-      Y: +0
+      Y: "+0"
       #Changes the Z-Coordinate of the player:
       #+BLOCKS = +BLOCKZBLOCKSAWAY FROM THE CURRENT LOCATION, -BLOCKS = -BLOCKZBLOCKSAWAY FROM THE CURRENT LOCATION,
       #BLOCKS = XCOORDINATE
-      Z: +0
+      Z: "+0"
     #If you want to spawn mobs, use this setting
     SpawnMob:
       #The id of the mob

@@ -115,7 +115,7 @@ public class GiftDataHandler {
                 return Material.valueOf(material);
             }
         }
-        return Material.GRASS_BLOCK;
+        return Material.GRASS;
     }
 
     public Enchantment getEnchantmentByString(String enchant){

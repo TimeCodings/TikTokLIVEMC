@@ -1,5 +1,6 @@
 package dev.timecoding.tiktokspawn.command;
 
+import com.sun.istack.internal.NotNull;
 import dev.timecoding.tiktokspawn.TikTokSpawn;
 import dev.timecoding.tiktokspawn.socket.TikTokSocket;
 import org.bukkit.Bukkit;
@@ -7,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class TikTokLiveCommand implements CommandExecutor {
 

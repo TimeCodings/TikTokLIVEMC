@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class TikTokSpawn extends JavaPlugin {
 
@@ -55,8 +56,8 @@ public final class TikTokSpawn extends JavaPlugin {
             for(Player allOnline : Bukkit.getOnlinePlayers()){
                 selectedPlayers.add(allOnline);
             }
-        }else if(!configHandler.getBoolean("Player.AllOnline") && !configHandler.getBoolean("Player.FirstWhichJoins") && Bukkit.getOnlinePlayers().size() != 0 && Bukkit.getOnlinePlayers().stream().toList().get(0).getName().equalsIgnoreCase(configHandler.getString("Player.OrName"))){
-            selectedPlayers.add(Bukkit.getOnlinePlayers().stream().toList().get(0));
+        }else if(!configHandler.getBoolean("Player.AllOnline") && !configHandler.getBoolean("Player.FirstWhichJoins") && Bukkit.getOnlinePlayers().size() != 0 && Bukkit.getOnlinePlayers().stream().collect(Collectors.toList()).get(0).getName().equalsIgnoreCase(configHandler.getString("Player.OrName"))){
+            selectedPlayers.add(Bukkit.getOnlinePlayers().stream().collect(Collectors.toList()).get(0));
         }
         if(this.configHandler.getBoolean("bStats")){
             this.metrics = new Metrics(this,17647);
