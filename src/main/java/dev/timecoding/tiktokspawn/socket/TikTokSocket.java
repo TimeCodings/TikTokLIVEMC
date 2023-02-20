@@ -15,7 +15,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TikTokSocket {
 
@@ -95,6 +94,12 @@ public class TikTokSocket {
                                 break;
                             } else if (i == 4 && line.startsWith("value1=")) {
                                 decodeString(line);
+                                if(!getValues().containsKey("giftId") && getValues().containsKey("content") || getValues().containsKey("giftId") && getValues().get("giftId").equalsIgnoreCase("") && getValues().containsKey("content")){
+                                    if(getValues().containsKey("giftId")){
+                                        getValues().remove("giftId");
+                                    }
+                                    getValues().put("giftId", getValues().get("content"));
+                                }
                                 if (getValues().get("password").equals(configHandler.getString("Socket.Password"))) {
                                     executeActions();
                                 }
@@ -127,6 +132,12 @@ public class TikTokSocket {
                         for (String message : result.split(" , ")) {
                             if (!message.equalsIgnoreCase("")) {
                                 decodeString(message);
+                                if(!getValues().containsKey("giftId") && getValues().containsKey("content") || getValues().containsKey("giftId") && getValues().get("giftId").equalsIgnoreCase("") && getValues().containsKey("content")){
+                                    if(getValues().containsKey("giftId")){
+                                        getValues().remove("giftId");
+                                    }
+                                    getValues().put("giftId", getValues().get("content"));
+                                }
                                 executeActions();
                             }
                         }
@@ -158,8 +169,8 @@ public class TikTokSocket {
 
     public void executeActions(){
         for (String action : getActions()) {
-            List<Integer> giftIdListFromAction = getValidGiftIDs(action);
-            for (Integer giftId : giftIdListFromAction) {
+            List<String> giftIdListFromAction = getValidGiftIDs(action);
+            for (String giftId : giftIdListFromAction) {
                 if (giftId.toString().equals(getValues().get("giftId").toString())) {
                     String path = "Actions." + action + ".";
                     for (Player selected : plugin.getSelectedPlayers()) {
@@ -229,7 +240,7 @@ public class TikTokSocket {
             public void run() {
                 String userId = getValues().get("userId");
                 String username = getValues().get("username");
-                Integer giftId = Integer.valueOf(getValues().get("giftId"));
+                String giftId = String.valueOf(getValues().get("giftId"));
                 String giftAmount = getValues().get("value2");
                 if(configHandler.keyExists(path+"Command")){
                     String command = replacePlaceholders(configHandler.getString(path+"Command"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
@@ -320,12 +331,19 @@ public class TikTokSocket {
         return new Location(location.getWorld(), x, y, z, location.getYaw(), location.getPitch());
     }
 
-    private String replacePlaceholders(String existsString, Player player, String giftName, Integer giftId, Integer giftCoins, String giftAmount){
+    private String replacePlaceholders(String existsString, Player player, String giftName, String giftId, Integer giftCoins, String giftAmount){
         return existsString.replace("%player_name%", player.getName()).replace("%player_uuid%", player.getUniqueId().toString())
                 .replace("%player_x%", String.valueOf(player.getLocation().getBlockX())).replace("%player_y%", String.valueOf(player.getLocation().getBlockY())).replace("%player_z%", String.valueOf(player.getLocation().getBlockZ()))
                 .replace("%player_yaw%", String.valueOf(player.getLocation().getYaw())).replace("%player_pitch%", String.valueOf(player.getLocation().getPitch()))
-                .replace("%gift_name%", giftName).replace("%gift_id%", String.valueOf(giftId)).replace("%gift_coins%", String.valueOf(giftCoins)).replace("%gift_amount%", giftAmount)
-                .replace("%gifter_name%", getValues().get("username")).replace("%gifter_id%", getValues().get("userId"));
+                .replace("%gift_name%", notNullReplacer(giftName)).replace("%gift_id%", notNullReplacer(String.valueOf(giftId))).replace("%gift_coins%", notNullReplacer(String.valueOf(giftCoins))).replace("%gift_amount%", notNullReplacer(giftAmount))
+                .replace("%gifter_name%", notNullReplacer(getValues().get("username"))).replace("%gifter_id%", notNullReplacer(getValues().get("userId")));
+    }
+
+    private String notNullReplacer(String existsString){
+        if(existsString != null){
+            return existsString;
+        }
+        return "";
     }
 
     public List<String> getSpawnMobPathList(String action){
@@ -345,7 +363,7 @@ public class TikTokSocket {
         return mobPaths;
     }
 
-    public Integer getCoinsByGiftID(Integer giftId){
+    public Integer getCoinsByGiftID(String giftId){
         String path = getGiftPath(giftId);
         if(path != null){
             return Integer.valueOf(path.split("\\.")[1]);
@@ -365,9 +383,9 @@ public class TikTokSocket {
         return actions;
     }
 
-    public List<Integer> getValidGiftIDs(String ids){
+    public List<String> getValidGiftIDs(String ids){
         List<String> mixedGiftList = new ArrayList<String>(Arrays.asList(ids.split(", ")));
-        List<Integer> giftIdList = new ArrayList<>();
+        List<String> giftIdList = new ArrayList<>();
         for(String mixedValue : mixedGiftList){
             if(isInteger(mixedValue) || !isInteger(mixedValue) && mixedValue.contains("C")){
                 String id = mixedValue;
@@ -376,19 +394,21 @@ public class TikTokSocket {
                         String actionBase = "GiftID."+id.toString().replace("C", "")+".";
                         if(keys.startsWith(actionBase)){
                             if(!giftIdList.contains(Integer.valueOf(keys.replace(actionBase, "")))) {
-                                giftIdList.add(Integer.valueOf(keys.replace(actionBase, "")));
+                                giftIdList.add(String.valueOf(Integer.valueOf(keys.replace(actionBase, ""))));
                             }
                         }
                     }
-                }else if(giftExists(Integer.valueOf(id))){
+                }else if(giftExists(String.valueOf(Integer.valueOf(id)))){
                     if(!giftIdList.contains(id)) {
-                        giftIdList.add(Integer.valueOf(id));
+                        giftIdList.add(String.valueOf(Integer.valueOf(id)));
                     }
                 }
             }else {
                 Integer giftIDbyName = getGiftIDbyName(mixedValue);
                 if(giftIDbyName != 0){
-                    giftIdList.add(giftIDbyName);
+                    giftIdList.add(String.valueOf(giftIDbyName));
+                }else{
+                    giftIdList.add(mixedValue);
                 }
             }
         }
@@ -407,12 +427,15 @@ public class TikTokSocket {
         return 0;
     }
 
-    public String getGiftNameByID(Integer id){
+    public String getGiftNameByID(String id){
         String path = getGiftPath(id);
-        return this.giftDataHandler.getString(path);
+        if(path != null) {
+            return this.giftDataHandler.getString(path);
+        }
+        return null;
     }
 
-    public String getGiftPath(Integer id){
+    public String getGiftPath(String id){
         if(giftExists(id)){
             for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
                 if(keys.startsWith("GiftID.") && keys.endsWith("."+String.valueOf(id))){
@@ -423,7 +446,7 @@ public class TikTokSocket {
         return null;
     }
 
-    public boolean giftExists(Integer id){
+    public boolean giftExists(String id){
         for(String keys : this.giftDataHandler.getConfig().getValues(true).keySet()){
             if(keys.startsWith("GiftID.") && keys.endsWith("."+String.valueOf(id))){
                 return true;

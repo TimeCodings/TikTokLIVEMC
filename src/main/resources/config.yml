@@ -44,6 +44,11 @@ Socket:
 Actions:
   #Change this to your giftid, giftname (must be configurated in the giftlist.yml), coinamount
   #You can also add multible giftids, giftnames and coinamounts by adding a "," and a space " " after each giftid, giftname or coinamount
+  ####################################################################################################################################################################################################
+  #NEW IN UPDATE 1.1.1: You can now use the TikFinity Action-Names to listen to TikTok-Events, that means you can now listen to for example Follows
+  #or Subscriptions (for example: If you created a action in TikFinitywith the name "LOL" you're now able to change "6525, 6661" to "LOL" to listen to the specific event configurated in TikFinity)
+  #IMPORTANT: THAT IS ONLY WORKING IF THE NAME ISN'T A GIFT ID OR A GIFT NAME (YOU CAN VIEW ALL GIFT-IDS AND GIFT-NAMES IN THE giftlist.yml)
+  ####################################################################################################################################################################################################
   6525, 6661:
     #Send a Command
     #Placeholders: %player_name% for the player-name, %player_uuid% for the player-uuid
@@ -125,7 +130,7 @@ bStats: true
 
 #DON'T CHANGE THIS
 #AFTER CHANGING THIS CONFIG WON'T EXIST ANYMORE
-config-version: 1.1
+config-version: 1.2
 
 
 
