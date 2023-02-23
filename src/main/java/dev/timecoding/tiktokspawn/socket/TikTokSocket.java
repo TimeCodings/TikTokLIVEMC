@@ -8,13 +8,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TikTokSocket {
 
@@ -129,7 +129,8 @@ public class TikTokSocket {
                         }
                         String result = sb.toString();
                         result = result.replaceAll("<[^>]*>", "");
-                        for (String message : result.split(" , ")) {
+                        for (String message : result.split(",")) {
+                            System.out.println(message+" |");
                             if (!message.equalsIgnoreCase("")) {
                                 decodeString(message);
                                 if(!getValues().containsKey("giftId") && getValues().containsKey("content") || getValues().containsKey("giftId") && getValues().get("giftId").equalsIgnoreCase("") && getValues().containsKey("content")){
@@ -269,7 +270,7 @@ public class TikTokSocket {
                     player.teleport(modifiedLocation);
                 }
                 for(String spawnMobPath : getSpawnMobPathList(action)){
-                    EntityType type = getEntityTypeByString(configHandler.getString(spawnMobPath+"Type"));
+                    EntityType type = getEntityTypeByString(configHandler.getString(spawnMobPath+"Type"), spawnMobPath);
                     if(type != null){
                         Integer entityAmount = 1;
                         if(configHandler.keyExists(spawnMobPath+"Amount")){
@@ -285,14 +286,38 @@ public class TikTokSocket {
                         }else{
                             modifiedLocation = getModifiedLocation(player.getLocation(), spawnMobPath+"SpawnDistance.");
                         }
-                        player.getWorld().spawnEntity(modifiedLocation, type);
+                        Entity entity = player.getWorld().spawnEntity(modifiedLocation, type);
+                        if(configHandler.keyExists(spawnMobPath+"Name")){
+                            entity.setCustomName(replacePlaceholders(configHandler.getString(spawnMobPath+"Name"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount));
+                        }
+                        if(entity instanceof Tameable && configHandler.keyExists(spawnMobPath+"Tamed")) {
+                            Tameable animalTamer = ((Tameable) entity);
+                            animalTamer.setTamed(configHandler.getBoolean(spawnMobPath+"Tamed"));
+                            animalTamer.setOwner(player);
+                        }
                     }
                 }
             }
         });
     }
 
-    private EntityType getEntityTypeByString(String stringEntityType){
+    private EntityType getEntityTypeByString(String stringEntityType, String basePath){
+        if(configHandler.keyExists(basePath+"RandomMobs") && configHandler.getBoolean(basePath+"RandomMobs.Enabled")) {
+            if (configHandler.getBoolean(basePath+"RandomMobs.CompletelyRandom")) {
+                Random random = new Random();
+                Integer randomNumber = random.nextInt(EntityType.values().length);
+                return EntityType.values()[randomNumber];
+            } else if (configHandler.keyExists(basePath + "RandomMobs.List")) {
+                List<String> randomMobStringList = configHandler.cfg.getStringList(basePath + "RandomMobs.List");
+                List<EntityType> randomMobTypeList = new ArrayList<>();
+                for (String randomMob : randomMobStringList) {
+                    randomMobTypeList.add(EntityType.valueOf(randomMob.toUpperCase()));
+                }
+                Random random = new Random();
+                Integer randomNumber = random.nextInt(randomMobTypeList.size());
+                return randomMobTypeList.get(randomNumber);
+            }
+        }
         return EntityType.valueOf(stringEntityType.toUpperCase());
     }
 

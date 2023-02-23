@@ -37,7 +37,7 @@ public class TikTokLiveCommand implements CommandExecutor {
                 if(this.plugin.getConfigHandler().getBoolean("Socket.Legacy")){
                     sender.sendMessage("§fhttps://timecoding.de/tikfinity/legacy.php?ip="+this.plugin.getConfigHandler().getString("Socket.IP")+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
                 }else{
-                    sender.sendMessage("§fhttps://timecoding.de/tikfinity/connector.php?ip="+this.plugin.getConfigHandler().getString("Socket.IP")+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
+                    sender.sendMessage("§fhttps://timecoding.de/tikfinity/connector.php?ip="+this.plugin.getPublicIPAddress()+"&port="+this.plugin.getConfigHandler().getString("Socket.Port")+"&password="+this.plugin.getConfigHandler().getString("Socket.Password"));
                 }
             }else if(sender.hasPermission("tiktoklive.help")){
                 sender.sendMessage("");

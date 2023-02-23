@@ -8,8 +8,8 @@
 ####################################################
 ###############################
 #   Made by TimeCode @ 2023   #
-#  Plugin-Version: 1.0-BETA   #
-#       (05.02.2023)          #
+#  Plugin-Version: 1.1.4-BETA #
+#       (23.02.2023)          #
 #############################################################################################################
 # If you got an error or found a bug (or if you have wishes), join my discord: https://discord.gg/mf9JNrzh  #
 # And Thank You for downloading my plugin! Please do not report bugs in the review section, because as a    #
@@ -57,6 +57,10 @@ Actions:
     #%gift_id% to get the gift-id, %gift_coins% to get the coins which are needed to buy the gift, %gift_amount% get the amount of gifts,
     #%gifter_name% to get the username of the gifter, %gifter_id% to get the userid of the gifter
     Command: ""
+    #If you want to use multible Commands try this (the rules and options are the same like in the Command option)
+    Commands:
+      - "COMMAND1"
+      - "COMMAND2"
     #Change this to "false" if the Command shouldn't get executed in the console (if it's "false" the command will be executed by the player)
     PerformAsConsole: true
     #Send a message to a player
@@ -86,11 +90,28 @@ Actions:
     SpawnMob:
       #The id of the mob
       1:
+        #Set the name of the mob (you can also use the placeholders from the Command/Message Option)
+        Name: "&8&lThe Wither"
         #Set the Type of the Mob (REQUIRED)
         #You can find all of them here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+        #Set the type to RANDOM to spawn a random mob
         Type: WITHER
+        #Use this to spawn random mobs from a list or completely random mobs
+        RandomMobs:
+          #After enabling this the option Type won't work anymore
+          Enabled: false
+          #Enable this if you want to spawn completely random mobs
+          #After enabling this the List below won't work anymore
+          CompletelyRandom: false
+          #Set the mobs which can get randomly be choosen
+          #You can find all of them here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+          List:
+            - WITHER
+            - ENDER_DRAGON
         #Set the amount of mobs which should get spawned (NOT REQUIRED)
         Amount: 1
+        #Set the mob tamed (true or false) | IMPORTANT: Only working for Tameable mobs (like wolf, horse, allay, fox, ...)
+        Tamed: true
         #Change the settings for the SpawnDistance of the mob (NOT REQUIRED)
         SpawnDistance:
           #Change the settings for the random spawn system
@@ -130,7 +151,7 @@ bStats: true
 
 #DON'T CHANGE THIS
 #AFTER CHANGING THIS CONFIG WON'T EXIST ANYMORE
-config-version: 1.2
+config-version: 1.2.2
 
 
 
