@@ -130,7 +130,6 @@ public class TikTokSocket {
                         String result = sb.toString();
                         result = result.replaceAll("<[^>]*>", "");
                         for (String message : result.split(",")) {
-                            System.out.println(message+" |");
                             if (!message.equalsIgnoreCase("")) {
                                 decodeString(message);
                                 if(!getValues().containsKey("giftId") && getValues().containsKey("content") || getValues().containsKey("giftId") && getValues().get("giftId").equalsIgnoreCase("") && getValues().containsKey("content")){
@@ -243,8 +242,43 @@ public class TikTokSocket {
                 String username = getValues().get("username");
                 String giftId = String.valueOf(getValues().get("giftId"));
                 String giftAmount = getValues().get("value2");
-                if(configHandler.keyExists(path+"Command")){
-                    String command = replacePlaceholders(configHandler.getString(path+"Command"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                if(configHandler.keyExists(path+"Commands")){
+                    List<String> commandList = configHandler.cfg.getStringList(path+"Commands");
+                    if(configHandler.keyExists(path+"RandomCommand") && !configHandler.getBoolean(path+"RandomCommand")) {
+                        for (String commands : commandList) {
+                            commands = replacePlaceholders(commands, player);
+                            if (commands.startsWith("/")) {
+                                commands = commands.substring(1, commands.length());
+                            }
+                            if (configHandler.keyExists(path + "PerformAsConsole") && configHandler.getBoolean(path + "PerformAsConsole")) {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commands);
+                            } else {
+                                if (commands.contains("_performasconsole_")) {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commands);
+                                } else {
+                                    player.performCommand(commands);
+                                }
+                            }
+                        }
+                    }else{
+                        Random random = new Random();
+                        Integer randomInteger = random.nextInt(commandList.size());
+                        String command = replacePlaceholders(commandList.get(randomInteger), player);
+                        if (command.startsWith("/")) {
+                            command = command.substring(1, command.length());
+                        }
+                        if (configHandler.keyExists(path + "PerformAsConsole") && configHandler.getBoolean(path + "PerformAsConsole")) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                        } else {
+                            if (command.contains("_performasconsole_")) {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                            } else {
+                                player.performCommand(command);
+                            }
+                        }
+                    }
+                }else if(configHandler.keyExists(path+"Command")){
+                    String command = replacePlaceholders(configHandler.getString(path+"Command"), player);
                     if(command.startsWith("/")){
                         command = command.substring(1, command.length());
                     }
@@ -254,12 +288,33 @@ public class TikTokSocket {
                         player.performCommand(command);
                     }
                 }
+                if(configHandler.getBoolean(path+"RandomHealth.Enabled")){
+                    if(configHandler.keyExists(path+"RandomHealth.MinimumHealth") && configHandler.keyExists(path+"RandomHealth.MaximumHealth")){
+                        Integer minimumHealth = configHandler.getInteger(path+"RandomHealth.MinimumHealth");
+                        Integer maximumHealth = configHandler.getInteger(path+"RandomHealth.MaximumHealth");
+                        if(minimumHealth >= 1){
+                            Random random = new Random();
+                            boolean ready = false;
+                            if(!ready){
+                                Integer randomHealth = random.nextInt((maximumHealth+1));
+                                if(randomHealth >= minimumHealth){
+                                    ready = true;
+                                    if(configHandler.getBoolean(path+"RandomHealth.MaxHealth")){
+                                        player.setMaxHealth(randomHealth);
+                                    }else{
+                                        player.setHealth(randomHealth);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 if(configHandler.keyExists(path+"Message")){
-                    String message = replacePlaceholders(configHandler.getString(path+"Message"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                    String message = replacePlaceholders(configHandler.getString(path+"Message"), player);
                     player.sendMessage(message);
                 }
                 if(configHandler.keyExists(path+"Actionbar")){
-                    String message = replacePlaceholders(configHandler.getString(path+"Actionbar"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount);
+                    String message = replacePlaceholders(configHandler.getString(path+"Actionbar"), player);
                     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
                 }
                 if(configHandler.keyExists(path+"Sound")){
@@ -288,7 +343,7 @@ public class TikTokSocket {
                         }
                         Entity entity = player.getWorld().spawnEntity(modifiedLocation, type);
                         if(configHandler.keyExists(spawnMobPath+"Name")){
-                            entity.setCustomName(replacePlaceholders(configHandler.getString(spawnMobPath+"Name"), player, getGiftNameByID(giftId), giftId, getCoinsByGiftID(giftId), giftAmount));
+                            entity.setCustomName(replacePlaceholders(configHandler.getString(spawnMobPath+"Name"), player));
                         }
                         if(entity instanceof Tameable && configHandler.keyExists(spawnMobPath+"Tamed")) {
                             Tameable animalTamer = ((Tameable) entity);
@@ -356,7 +411,11 @@ public class TikTokSocket {
         return new Location(location.getWorld(), x, y, z, location.getYaw(), location.getPitch());
     }
 
-    private String replacePlaceholders(String existsString, Player player, String giftName, String giftId, Integer giftCoins, String giftAmount){
+    private String replacePlaceholders(String existsString, Player player){
+        String giftId = getValues().get("giftId");
+        String giftName = getGiftNameByID(giftId);
+        Integer giftCoins = getCoinsByGiftID(giftId);
+        String giftAmount = getValues().get("value2");
         return existsString.replace("%player_name%", player.getName()).replace("%player_uuid%", player.getUniqueId().toString())
                 .replace("%player_x%", String.valueOf(player.getLocation().getBlockX())).replace("%player_y%", String.valueOf(player.getLocation().getBlockY())).replace("%player_z%", String.valueOf(player.getLocation().getBlockZ()))
                 .replace("%player_yaw%", String.valueOf(player.getLocation().getYaw())).replace("%player_pitch%", String.valueOf(player.getLocation().getPitch()))

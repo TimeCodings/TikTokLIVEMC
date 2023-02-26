@@ -32,7 +32,7 @@ public class ConfigHandler {
 
     private boolean retry = false;
 
-    private String newconfigversion = "1.2.2";
+    private String newconfigversion = "1.4";
 
     public void init() {
         f = new File(plugin.getDataFolder(), "config.yml");

@@ -61,8 +61,20 @@ Actions:
     Commands:
       - "COMMAND1"
       - "COMMAND2"
+    #If you want to execute a random command just use this option | To get this working the "Commands" must be defined
+    RandomCommand: false
     #Change this to "false" if the Command shouldn't get executed in the console (if it's "false" the command will be executed by the player)
     PerformAsConsole: true
+    #This option allows you to change the health (hearts) of the player to a random health (hearts)
+    RandomHealth:
+      #Enable this feature with 'true'
+      Enabled: false
+      #Set if the whole health bar should be inbuilt
+      MaxHealth: true
+      #Set the minimum health
+      MinimumHealth: 1
+      #Set the maximum health
+      MaximumHealth: 10
     #Send a message to a player
     #Placeholders: Same as in Command
     Message: "&aThis is a test"
@@ -151,16 +163,4 @@ bStats: true
 
 #DON'T CHANGE THIS
 #AFTER CHANGING THIS CONFIG WON'T EXIST ANYMORE
-config-version: 1.2.2
-
-
-
-
-
-
-
-
-
-
-
-
+config-version: 1.4
