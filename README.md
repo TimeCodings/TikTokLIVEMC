@@ -2,7 +2,7 @@
 
 **Hey, thanks for viewing this page!** This plugin was a wish by @seb1211! Because there's actually no other plugin (for free) on the market which is able handle TikTok Donations in Minecraft, I decided to create this one for all of you for free :coffee:
 
-Please note that this plugin is in BETA phase, means there may be few-many bugs in the plugin. If you find any, feel free to open a ticket on my discord server: https://discord.gg/8QWmU4ebCC
+Please note that this plugin is in BETA phase, means there may be few-many bugs in the plugin. If you find any, feel free to open a ticket on my discord server: https://discord.tikmc.de/
 
 **Whats TikTokLive?**
 TikTok Live allows you to connect your TikFinity account to Minecraft to perform various actions at various events (ATTENTION: currently only donations) in Minecraft!
@@ -24,14 +24,14 @@ TikTok Live allows you to connect your TikFinity account to Minecraft to perform
 **8.** On the opened TikFinity website click on "Create new Action", type in a name (it isn't important which is the name) and scroll down to "Trigger Webhook". Enable this setting with one click on the box and paste in the copied link (from Minecraft) in the left textbox.
 **9.** On the webpage scroll down to "Save" and Click the Button
 **10.** You can now define "Events" and configure them to execute a Minecraft-Gift-Action!'
-**11.** You're ready! All you need to do is changing the gifts/actions in the config.yml to your preferences. If you need help feel free to ask on my discord: https://discord.gg/8QWmU4ebCC
+**11.** You're ready! All you need to do is changing the gifts/actions in the config.yml to your preferences. If you need help feel free to ask on my discord: [https://discord.gg/8QWmU4ebCC](https://discord.tikmc.de/)
 
 **Coming Soon / TODO:**
 - A GUI for a easier setup
 - Edit Code
 - Fix Bugs
 - Full Support for the Minecraft-Versions between 1.8.8 - 1.19.3
-- Your Wishes (Write me your Ideas: https://discord.gg/mf9JNrzh)
+- Your Wishes (Write me your Ideas: https://discord.tikmc.de/)
 
 **Commands and Permissions:**
 /tiktoklive reload - Reloads the Configuration-Files and restarts the socket - Permission: tiktoklive.reload
