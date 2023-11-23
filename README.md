@@ -26,7 +26,7 @@ TikTok Live allows you to connect your TikFinity account to Minecraft to perform
     <li>On the opened TikFinity website click on "Create new Action", type in a name (it isn't important which is the name) and scroll down to "Trigger Webhook". Enable this setting with one click on the box and paste in the copied link (from Minecraft) in the left textbox.</li>
     <li>On the webpage scroll down to "Save" and Click the Button</li>
     <li>You can now define "Events" and configure them to execute a Minecraft-Gift-Action!'</li>
-    <li>You're ready! All you need to do is changing the gifts/actions in the config.yml to your preferences. If you need help feel free to ask on my discord: [https://discord.gg/8QWmU4ebCC](https://discord.tikmc.de/)</li>
+    <li>You're ready! All you need to do is changing the gifts/actions in the config.yml to your preferences. If you need help feel free to ask on my discord: <a href="https://discord.tikmc.de/" target="_blank">https://discord.gg/8QWmU4ebCC</a>
   </ol>
 </p>
 **Coming Soon / TODO:**
